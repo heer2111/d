@@ -244,13 +244,27 @@
     const msgs=["Wait 😭","Baby please","Nooo","I miss you","Just click yes 😤"];
     let i=0;
 
-    function dodge(){
-      noBtn.style.position="fixed";
-      noBtn.style.left=Math.random()*80+"vw";
-      noBtn.style.top=Math.random()*80+"vh";
-      noBtn.textContent=msgs[Math.min(i,msgs.length-1)];
-      i++;
-    }
+ function dodge(){
+  const padding = 16;
+
+  // make sure we know the button size
+  const rect = noBtn.getBoundingClientRect();
+
+  // keep it INSIDE the visible screen
+  const maxX = window.innerWidth - rect.width - padding;
+  const maxY = window.innerHeight - rect.height - padding;
+
+  const x = padding + Math.random() * Math.max(0, maxX - padding);
+  const y = padding + Math.random() * Math.max(0, maxY - padding);
+
+  noBtn.style.position = "fixed";
+  noBtn.style.left = x + "px";
+  noBtn.style.top  = y + "px";
+  noBtn.style.zIndex = "9999"; // ✅ never behind anything
+
+  noBtn.textContent = msgs[Math.min(i, msgs.length - 1)];
+  i++;
+}
 
     noBtn.addEventListener("mouseenter",dodge);
     noBtn.addEventListener("click",e=>{e.preventDefault();dodge();});
