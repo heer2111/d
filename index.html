@@ -153,7 +153,7 @@
     <h1>Baby… can I please make it up to you?</h1>
 
     <p>
-      I’m really sorry I upset you.
+      I'm really sorry I upset you.
       <span class="big">I love you so much</span>.
     </p>
 
@@ -165,7 +165,7 @@
     </div>
 
     <p style="font-size:12px;margin-top:14px;opacity:.8;">
-      ps: if you click “no” it might get shy 😭
+      ps: if you click "no" it might get shy 😭
     </p>
   </main>
 
@@ -173,13 +173,13 @@
   <div class="modal" id="promise">
     <div class="modalContent">
       <h2>YAY!! I love you forever 💗</h2>
-      <p>Here’s what I promise:</p>
+      <p>Here's what I promise:</p>
       <ul>
         <li>I will love you and adore you always</li>
         <li>I will never make you feel disrespected again</li>
         <li>I will always hear you out</li>
-        <li>I’ll give you all my love, kisses, and happiness</li>
-        <li>I’ll keep you feeling safe and loved, even from far away</li>
+        <li>I'll give you all my love, kisses, and happiness</li>
+        <li>I'll keep you feeling safe and loved, even from far away</li>
       </ul>
       <button class="close" id="toWin">Okay baby 🥺💞</button>
     </div>
@@ -212,7 +212,7 @@
     const messages = [
       "Wait 😭",
       "Baby please 🥺",
-      "Nooo don’t do that",
+      "Nooo don't do that",
       "I miss you",
       "Just click yes 😤💞"
     ];
@@ -230,13 +230,27 @@
     let step = 0;
     let armed = false;
 
-    // arm AFTER page fully loads (prevents in-app browser bug)
-    window.addEventListener("load", ()=>{
-      setTimeout(()=>{ armed = true; }, 500);
-    });
+    // Multiple fallbacks to ensure armed gets set
+    function armButton() {
+      armed = true;
+    }
+
+    // Try all possible load events
+    if (document.readyState === 'complete') {
+      setTimeout(armButton, 100);
+    } else {
+      window.addEventListener("load", () => {
+        setTimeout(armButton, 100);
+      });
+    }
+
+    // Backup: arm after a short delay regardless
+    setTimeout(armButton, 300);
 
     function moveNo(){
-      if(!armed) return;
+      if(!armed) {
+        armed = true; // Force arm on first interaction
+      }
 
       noBtn.style.display="inline-block";
       noBtn.style.visibility="visible";
