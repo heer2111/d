@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -38,7 +39,6 @@
       text-align:center;
       position:relative;
       overflow:hidden;
-      min-height:400px;
     }
 
     .badge{
@@ -71,7 +71,7 @@
       gap:14px;
       flex-wrap:wrap;
       position:relative;
-      min-height:60px;
+      min-height:80px;
     }
 
     button{
@@ -84,19 +84,24 @@
       box-shadow:0 12px 30px rgba(0,0,0,.18);
       user-select:none;
       -webkit-tap-highlight-color:transparent;
-      transition:none;
     }
 
     #yesBtn{
       background:linear-gradient(135deg,var(--pink),var(--pink2));
       color:white;
       min-width:170px;
+      position:relative;
+      z-index:1;
     }
 
     #noBtn{
       background:white;
       border:1px solid #ddd;
       min-width:120px;
+      position:absolute;
+      left:50%;
+      transform:translateX(-50%);
+      top:0;
     }
 
     .modal{
@@ -210,6 +215,7 @@
     const win = document.getElementById("win");
     const toWin = document.getElementById("toWin");
     const card = document.getElementById("card");
+    const btnRow = document.querySelector(".btnRow");
 
     const messages = [
       "Wait 😭",
@@ -230,58 +236,44 @@
     ];
 
     let step = 0;
-    let armed = false;
-    let hasMoved = false;
-
-    // Simpler arming - just wait for DOM to be ready
-    function armButton() {
-      armed = true;
-    }
-
-    // Check if page is already loaded
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', armButton);
-    } else {
-      armButton();
-    }
 
     function moveNo(){
-      if(!armed) return;
-
-      // Only set to absolute positioning after first move
-      if (!hasMoved) {
-        noBtn.style.position = "absolute";
-        hasMoved = true;
-      }
-
       const cardRect = card.getBoundingClientRect();
       const btnRect = noBtn.getBoundingClientRect();
+      const rowRect = btnRow.getBoundingClientRect();
       const pad = 12;
 
       const p = positions[step % positions.length];
 
-      let left = (p.x/100)*cardRect.width;
-      let top  = (p.y/100)*cardRect.height;
+      // Calculate position relative to btnRow
+      let left = (p.x/100) * rowRect.width;
+      let top  = (p.y/100) * rowRect.height;
 
-      left = Math.min(Math.max(pad,left),cardRect.width-btnRect.width-pad);
-      top  = Math.min(Math.max(pad,top), cardRect.height-btnRect.height-pad);
+      left = Math.min(Math.max(pad, left), rowRect.width - btnRect.width - pad);
+      top  = Math.min(Math.max(pad, top), rowRect.height - btnRect.height - pad);
 
-      noBtn.style.left = left+"px";
-      noBtn.style.top  = top+"px";
+      noBtn.style.left = left + "px";
+      noBtn.style.top  = top + "px";
+      noBtn.style.transform = "none";
 
-      noBtn.textContent = messages[Math.min(step,messages.length-1)];
+      noBtn.textContent = messages[Math.min(step, messages.length - 1)];
       step++;
     }
 
-    // DO NOT use mouseenter (breaks in email browsers)
-    noBtn.addEventListener("mouseover", moveNo);
-    noBtn.addEventListener("click", e=>{e.preventDefault();moveNo();});
-    noBtn.addEventListener("touchstart", e=>{e.preventDefault();moveNo();},{passive:false});
+    noBtn.addEventListener("mouseenter", moveNo);
+    noBtn.addEventListener("click", e => {
+      e.preventDefault();
+      moveNo();
+    });
+    noBtn.addEventListener("touchstart", e => {
+      e.preventDefault();
+      moveNo();
+    }, {passive: false});
 
-    yesBtn.addEventListener("click", ()=> promise.style.display="flex");
-    toWin.addEventListener("click", ()=>{
-      promise.style.display="none";
-      win.style.display="flex";
+    yesBtn.addEventListener("click", () => promise.style.display = "flex");
+    toWin.addEventListener("click", () => {
+      promise.style.display = "none";
+      win.style.display = "flex";
     });
   </script>
 
