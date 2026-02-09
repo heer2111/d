@@ -7,15 +7,12 @@
 
   <style>
     :root{
-      --bg1:#fff1f5;
-      --bg2:#fdf2f8;
-      --card:#ffffffcc;
-      --text:#1f2937;
-      --muted:#6b7280;
       --pink:#ec4899;
       --pink2:#fb7185;
-      --shadow: 0 18px 50px rgba(0,0,0,.10);
-      --radius: 24px;
+      --bg:#fff1f5;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
     }
 
     *{box-sizing:border-box}
@@ -23,93 +20,68 @@
     body{
       margin:0;
       min-height:100vh;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 800px at 20% 20%, var(--bg2), transparent 60%),
-        radial-gradient(1200px 800px at 80% 30%, var(--bg1), transparent 60%),
-        linear-gradient(135deg, #fff, #ffe4ee);
       display:grid;
       place-items:center;
+      background:linear-gradient(135deg,#fff,#ffe4ee);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text);
       padding:24px;
-      overflow:hidden;
-    }
-
-    /* Deterministic hearts (NOT random anymore) */
-    .hearts{
-      position:fixed;
-      inset:0;
-      pointer-events:none;
-      opacity:.35;
-    }
-    .heart{
-      position:absolute;
-      animation: floatUp linear infinite;
-    }
-    @keyframes floatUp{
-      from{ transform: translateY(110vh); opacity:0}
-      10%{opacity:1}
-      to{ transform: translateY(-20vh); opacity:0}
     }
 
     .card{
-      width:min(560px, 100%);
+      width:100%;
+      max-width:560px;
       background:var(--card);
-      backdrop-filter: blur(10px);
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
+      border-radius:24px;
       padding:28px;
-      border:1px solid rgba(236,72,153,.15);
+      box-shadow:0 20px 50px rgba(0,0,0,.12);
       text-align:center;
-      position: relative;          /* ✅ anchor for absolute NO button */
-      overflow: hidden;            /* ✅ keeps it inside */
+      position:relative;
+      overflow:hidden;
     }
 
     .badge{
       display:inline-block;
-      padding:8px 12px;
+      padding:8px 14px;
       border-radius:999px;
-      background:rgba(236,72,153,.10);
+      background:rgba(236,72,153,.1);
       color:var(--pink);
-      font-weight:600;
       font-size:13px;
+      font-weight:600;
       margin-bottom:10px;
     }
 
     h1{
+      margin:12px 0;
       font-size:clamp(26px,4vw,40px);
-      margin:10px 0;
     }
 
     p{
       color:var(--muted);
-      font-size:16px;
       line-height:1.5;
-      margin:10px 0;
     }
 
-    .big{ font-weight:700; color:var(--text); }
+    .big{font-weight:700;color:var(--text)}
 
     .btnRow{
+      margin-top:24px;
       display:flex;
       justify-content:center;
-      gap:12px;
-      margin-top:20px;
-      flex-wrap: wrap;
-      position: relative;
-      z-index: 1;
+      gap:14px;
+      flex-wrap:wrap;
+      position:relative;
     }
 
     button{
       border:none;
       border-radius:999px;
-      padding:14px 20px;
+      padding:14px 22px;
       font-size:16px;
       font-weight:700;
       cursor:pointer;
-      box-shadow:0 10px 25px rgba(0,0,0,.15);
-      -webkit-tap-highlight-color: transparent;
+      box-shadow:0 12px 30px rgba(0,0,0,.18);
       user-select:none;
+      -webkit-tap-highlight-color:transparent;
     }
 
     #yesBtn{
@@ -122,8 +94,7 @@
       background:white;
       border:1px solid #ddd;
       min-width:120px;
-      position: relative; /* starts normal */
-      z-index: 2;
+      position:relative;
     }
 
     .modal{
@@ -134,7 +105,7 @@
       align-items:center;
       justify-content:center;
       padding:18px;
-      z-index: 2000;
+      z-index:2000;
     }
 
     .modalContent{
@@ -147,31 +118,34 @@
       box-shadow:0 30px 80px rgba(0,0,0,.25);
     }
 
-    .apologyList{
+    ul{
       text-align:left;
-      margin:16px auto;
       max-width:420px;
+      margin:16px auto;
       padding-left:18px;
     }
-    .apologyList li{
-      margin:8px 0;
-      font-size:15px;
-      color:#374151;
-    }
+
+    li{margin:8px 0;color:#374151}
 
     .close{
       margin-top:16px;
-      background:rgba(236,72,153,.10);
+      background:rgba(236,72,153,.1);
       color:var(--pink);
-      border:1px solid rgba(236,72,153,.18);
+      border:1px solid rgba(236,72,153,.2);
       box-shadow:none;
+    }
+
+    img{
+      width:100%;
+      max-width:360px;
+      border-radius:16px;
+      margin:10px 0;
+      box-shadow:0 12px 30px rgba(0,0,0,.25);
     }
   </style>
 </head>
 
 <body>
-
-  <div class="hearts" id="hearts"></div>
 
   <main class="card" id="card">
     <div class="badge">💗 from your sweetbaby girl</div>
@@ -179,153 +153,123 @@
     <h1>Baby… can I please make it up to you?</h1>
 
     <p>
-      I’m really sorry I upset you. I never want to be the reason you feel anything but loved.
+      I’m really sorry I upset you.
       <span class="big">I love you so much</span>.
     </p>
 
-    <p style="font-size:13px; margin-top:12px;">Can we press reset? 🥺</p>
+    <p style="font-size:13px;margin-top:10px;">Can we press reset? 🥺</p>
 
-    <div class="btnRow" id="btnRow">
+    <div class="btnRow">
       <button id="yesBtn">Yes, come here 💞</button>
       <button id="noBtn">No 😤</button>
     </div>
 
-    <p style="font-size:12px; margin-top:14px; opacity:.8;">ps: if you click “no” it might get shy 😭</p>
+    <p style="font-size:12px;margin-top:14px;opacity:.8;">
+      ps: if you click “no” it might get shy 😭
+    </p>
   </main>
 
   <!-- PROMISE MODAL -->
-  <div class="modal" id="modal">
+  <div class="modal" id="promise">
     <div class="modalContent">
       <h2>YAY!! I love you forever 💗</h2>
       <p>Here’s what I promise:</p>
-
-      <ul class="apologyList">
+      <ul>
         <li>I will love you and adore you always</li>
         <li>I will never make you feel disrespected again</li>
-        <li>I will always hear you out and listen properly</li>
+        <li>I will always hear you out</li>
         <li>I’ll give you all my love, kisses, and happiness</li>
-        <li>I’ll always try to keep you feeling safe and loved — even from far away</li>
+        <li>I’ll keep you feeling safe and loved, even from far away</li>
       </ul>
-
-      <button class="close" id="closeBtn">Okay baby 🥺💞</button>
+      <button class="close" id="toWin">Okay baby 🥺💞</button>
     </div>
   </div>
 
-  <!-- FINAL NBA WIN SCREEN -->
-  <div class="modal" id="winScreen">
+  <!-- NBA WIN SCREEN -->
+  <div class="modal" id="win">
     <div class="modalContent">
       <h2>SHOT MADE 🏀💘</h2>
       <p>Argument officially resolved.</p>
 
-      <img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RFjqtNpXmrBn2tumqM/giphy.gif"
-        alt="NBA clutch shot"
-        style="width:100%;max-width:360px;border-radius:16px;margin:12px 0;box-shadow:0 12px 30px rgba(0,0,0,.25);"
-      />
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RFjqtNpXmrBn2tumqM/giphy.gif">
 
-      <img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWYzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif"
-        alt="NBA celebration"
-        style="width:100%;max-width:360px;border-radius:16px;margin:8px 0 6px;box-shadow:0 12px 30px rgba(0,0,0,.25);"
-      />
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWYzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif">
 
       <p style="font-size:14px;color:#6b7280;">
-        Your sweetbaby girl never misses. I love you 🥺💗
+        Your sweetbaby girl never misses 💗
       </p>
     </div>
   </div>
 
   <script>
-    // Deterministic hearts (fixed positions + sizes + speeds)
-    const hearts = document.getElementById("hearts");
-    const heartLayout = [
-      { left: 8,  size: 18, dur: 11, delay: -1, emoji:"💗" },
-      { left: 18, size: 14, dur: 14, delay: -6, emoji:"💞" },
-      { left: 32, size: 22, dur: 12, delay: -3, emoji:"💕" },
-      { left: 44, size: 16, dur: 16, delay: -9, emoji:"💖" },
-      { left: 57, size: 20, dur: 13, delay: -4, emoji:"💘" },
-      { left: 68, size: 15, dur: 15, delay: -8, emoji:"💗" },
-      { left: 79, size: 21, dur: 12, delay: -2, emoji:"💞" },
-      { left: 90, size: 17, dur: 17, delay: -10, emoji:"💕" },
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const promise = document.getElementById("promise");
+    const win = document.getElementById("win");
+    const toWin = document.getElementById("toWin");
+    const card = document.getElementById("card");
+
+    const messages = [
+      "Wait 😭",
+      "Baby please 🥺",
+      "Nooo don’t do that",
+      "I miss you",
+      "Just click yes 😤💞"
     ];
-    heartLayout.forEach(h => {
-      const el = document.createElement("div");
-      el.className = "heart";
-      el.textContent = h.emoji;
-      el.style.left = h.left + "vw";
-      el.style.fontSize = h.size + "px";
-      el.style.animationDuration = h.dur + "s";
-      el.style.animationDelay = h.delay + "s";
-      hearts.appendChild(el);
+
+    const positions = [
+      {x:65,y:70},
+      {x:15,y:70},
+      {x:60,y:45},
+      {x:20,y:45},
+      {x:50,y:80},
+      {x:30,y:30},
+      {x:70,y:30}
+    ];
+
+    let step = 0;
+    let armed = false;
+
+    // arm AFTER page fully loads (prevents in-app browser bug)
+    window.addEventListener("load", ()=>{
+      setTimeout(()=>{ armed = true; }, 500);
     });
 
-    const noBtn   = document.getElementById("noBtn");
-    const yesBtn  = document.getElementById("yesBtn");
-    const modal   = document.getElementById("modal");
-    const win     = document.getElementById("winScreen");
-    const closeBtn= document.getElementById("closeBtn");
-    const card    = document.getElementById("card");
+    function moveNo(){
+      if(!armed) return;
 
-    const msgs = ["Wait 😭","Baby please 🥺","Noooo don’t do that","I miss you","Just click yes 😤💞"];
-    let step = 0;
+      noBtn.style.display="inline-block";
+      noBtn.style.visibility="visible";
+      noBtn.style.position="absolute";
 
-    // Planned, repeatable positions (percent inside the CARD)
-    const path = [
-      { x: 70, y: 70 },
-      { x: 15, y: 70 },
-      { x: 65, y: 48 },
-      { x: 20, y: 48 },
-      { x: 52, y: 80 },
-      { x: 30, y: 34 },
-      { x: 75, y: 34 },
-    ];
-
-    function moveNoPlanned(){
       const cardRect = card.getBoundingClientRect();
-
-      // switch NO to absolute *inside the card*
-      noBtn.style.position = "absolute";
-      noBtn.style.zIndex = "10";
-
-      // measure AFTER position change for accurate size
       const btnRect = noBtn.getBoundingClientRect();
-      const btnW = btnRect.width;
-      const btnH = btnRect.height;
+      const pad = 12;
 
-      const padding = 12;
-      const p = path[step % path.length];
+      const p = positions[step % positions.length];
 
-      // target position in pixels relative to card
-      let left = (p.x/100) * cardRect.width;
-      let top  = (p.y/100) * cardRect.height;
+      let left = (p.x/100)*cardRect.width;
+      let top  = (p.y/100)*cardRect.height;
 
-      // clamp inside card
-      left = Math.min(Math.max(padding, left), cardRect.width  - btnW - padding);
-      top  = Math.min(Math.max(padding, top),  cardRect.height - btnH - padding);
+      left = Math.min(Math.max(pad,left),cardRect.width-btnRect.width-pad);
+      top  = Math.min(Math.max(pad,top), cardRect.height-btnRect.height-pad);
 
-      noBtn.style.left = left + "px";
-      noBtn.style.top  = top  + "px";
+      noBtn.style.left = left+"px";
+      noBtn.style.top  = top+"px";
 
-      noBtn.textContent = msgs[Math.min(step, msgs.length - 1)];
+      noBtn.textContent = messages[Math.min(step,messages.length-1)];
       step++;
     }
 
-    // Hover/click/tap triggers (no randomness, ever)
-    noBtn.addEventListener("mouseenter", moveNoPlanned);
-    noBtn.addEventListener("click", (e)=>{ e.preventDefault(); moveNoPlanned(); });
-    noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNoPlanned(); }, {passive:false});
+    // DO NOT use mouseenter (breaks in email browsers)
+    noBtn.addEventListener("mouseover", moveNo);
+    noBtn.addEventListener("click", e=>{e.preventDefault();moveNo();});
+    noBtn.addEventListener("touchstart", e=>{e.preventDefault();moveNo();},{passive:false});
 
-    yesBtn.addEventListener("click", ()=> { modal.style.display = "flex"; });
-    closeBtn.addEventListener("click", ()=> { modal.style.display = "none"; win.style.display = "flex"; });
-
-    // Reset for consistent start every load
-    window.addEventListener("load", ()=>{
-      step = 0;
-      noBtn.textContent = "No 😤";
-      noBtn.style.position = "relative";
-      noBtn.style.left = "";
-      noBtn.style.top  = "";
-      noBtn.style.zIndex = "";
+    yesBtn.addEventListener("click", ()=> promise.style.display="flex");
+    toWin.addEventListener("click", ()=>{
+      promise.style.display="none";
+      win.style.display="flex";
     });
   </script>
 
