@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>For You 💗</title>
+
+  <style>
+    :root{
+      --bg1:#fff1f5;
+      --bg2:#fdf2f8;
+      --card:#ffffffcc;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --pink:#ec4899;
+      --pink2:#fb7185;
+      --shadow: 0 18px 50px rgba(0,0,0,.10);
+      --radius: 24px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      min-height:100vh;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 20%, var(--bg2), transparent 60%),
+        radial-gradient(1200px 800px at 80% 30%, var(--bg1), transparent 60%),
+        linear-gradient(135deg, #fff, #ffe4ee);
+      display:grid;
+      place-items:center;
+      padding:24px;
+      overflow:hidden;
+    }
+
+    .hearts{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      opacity:.35;
+    }
+
+    .heart{
+      position:absolute;
+      font-size:18px;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp{
+      from{ transform: translateY(110vh); opacity:0}
+      10%{opacity:1}
+      to{ transform: translateY(-20vh); opacity:0}
+    }
+
+    .card{
+      width:min(560px, 100%);
+      background:var(--card);
+      backdrop-filter: blur(10px);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:28px;
+      border:1px solid rgba(236,72,153,.15);
+      text-align:center;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(236,72,153,.10);
+      color:var(--pink);
+      font-weight:600;
+      font-size:13px;
+      margin-bottom:10px;
+    }
+
+    h1{
+      font-size:clamp(26px,4vw,40px);
+      margin:10px 0;
+    }
+
+    p{
+      color:var(--muted);
+      font-size:16px;
+      line-height:1.5;
+    }
+
+    .big{
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .btnRow{
+      display:flex;
+      justify-content:center;
+      gap:12px;
+      margin-top:20px;
+    }
+
+    button{
+      border:none;
+      border-radius:999px;
+      padding:14px 20px;
+      font-size:16px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 10px 25px rgba(0,0,0,.15);
+    }
+
+    #yesBtn{
+      background:linear-gradient(135deg,var(--pink),var(--pink2));
+      color:white;
+    }
+
+    #noBtn{
+      background:white;
+      border:1px solid #ddd;
+      position:relative;
+    }
+
+    .modal{
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+    }
+
+    .modalContent{
+      background:white;
+      border-radius:22px;
+      padding:22px;
+      max-width:520px;
+      width:100%;
+      text-align:center;
+      box-shadow:0 30px 80px rgba(0,0,0,.25);
+    }
+
+    .apologyList{
+      text-align:left;
+      margin:16px auto;
+      max-width:420px;
+    }
+
+    .apologyList li{
+      margin:8px 0;
+      font-size:15px;
+    }
+
+    .close{
+      margin-top:16px;
+      background:rgba(236,72,153,.10);
+      color:var(--pink);
+      border:1px solid rgba(236,72,153,.18);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="hearts" id="hearts"></div>
+
+  <main class="card" id="card">
+    <div class="badge">💗 from your sweetbaby girl</div>
+
+    <h1>Baby… can I please make it up to you?</h1>
+
+    <p>
+      I’m really sorry I upset you. I never want to be the reason you feel anything but loved.
+      <span class="big">I love you so much</span>.
+    </p>
+
+    <p style="font-size:13px;">Can we press reset? 🥺</p>
+
+    <div class="btnRow">
+      <button id="yesBtn">Yes, come here 💞</button>
+      <button id="noBtn">No 😤</button>
+    </div>
+  </main>
+
+  <!-- PROMISE MODAL -->
+  <div class="modal" id="modal">
+    <div class="modalContent">
+      <h2>YAY!! I love you forever 💗</h2>
+      <p>Here’s what I promise:</p>
+
+      <ul class="apologyList">
+        <li>I will love you and adore you always</li>
+        <li>I will never make you feel disrespected again</li>
+        <li>I will always hear you out and listen properly</li>
+        <li>I’ll give you all my love, kisses, and happiness</li>
+        <li>I’ll always try to keep you feeling safe and loved — even from far away</li>
+      </ul>
+
+      <button class="close" id="closeBtn">Okay baby 🥺💞</button>
+    </div>
+  </div>
+
+  <!-- FINAL NBA WIN SCREEN -->
+  <div class="modal" id="winScreen">
+    <div class="modalContent">
+      <h2>SHOT MADE 🏀💘</h2>
+      <p>Argument officially resolved.</p>
+
+      <img
+        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RFjqtNpXmrBn2tumqM/giphy.gif"
+        style="width:100%;max-width:360px;border-radius:16px;margin:12px 0;"
+      />
+
+      <img
+        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif"
+        style="width:100%;max-width:360px;border-radius:16px;"
+      />
+
+      <p style="font-size:14px;color:#6b7280;">
+        Your sweetbaby girl never misses. I love you 🥺💗
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const hearts = document.getElementById("hearts");
+    const emojis = ["💗","💕","💞","💖"];
+    for(let i=0;i<24;i++){
+      const h=document.createElement("div");
+      h.className="heart";
+      h.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.left=Math.random()*100+"vw";
+      h.style.animationDuration=(8+Math.random()*10)+"s";
+      h.style.animationDelay=(-Math.random()*10)+"s";
+      hearts.appendChild(h);
+    }
+
+    const noBtn=document.getElementById("noBtn");
+    const yesBtn=document.getElementById("yesBtn");
+    const modal=document.getElementById("modal");
+    const win=document.getElementById("winScreen");
+    const closeBtn=document.getElementById("closeBtn");
+
+    const msgs=["Wait 😭","Baby please","Nooo","I miss you","Just click yes 😤"];
+    let i=0;
+
+    function dodge(){
+      noBtn.style.position="fixed";
+      noBtn.style.left=Math.random()*80+"vw";
+      noBtn.style.top=Math.random()*80+"vh";
+      noBtn.textContent=msgs[Math.min(i,msgs.length-1)];
+      i++;
+    }
+
+    noBtn.addEventListener("mouseenter",dodge);
+    noBtn.addEventListener("click",e=>{e.preventDefault();dodge();});
+
+    yesBtn.onclick=()=>modal.style.display="flex";
+    closeBtn.onclick=()=>{
+      modal.style.display="none";
+      win.style.display="flex";
+    };
+  </script>
+
+</body>
+</html>
