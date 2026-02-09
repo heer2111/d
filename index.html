@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -24,7 +23,7 @@
       display:grid;
       place-items:center;
       background:linear-gradient(135deg,#fff,#ffe4ee);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      font-family:system-ui,-apple-system, Segoe UI, Roboto, Arial;
       color:var(--text);
       padding:24px;
     }
@@ -71,7 +70,7 @@
       gap:14px;
       flex-wrap:wrap;
       position:relative;
-      min-height:80px;
+      min-height:160px; /* ✅ IMPORTANT: gives room so it never clips */
     }
 
     button{
@@ -102,6 +101,7 @@
       left:50%;
       transform:translateX(-50%);
       top:0;
+      z-index:2;
     }
 
     .modal{
@@ -166,7 +166,7 @@
 
     <p style="font-size:13px;margin-top:10px;">Can we press reset? 🥺</p>
 
-    <div class="btnRow">
+    <div class="btnRow" id="btnRow">
       <button id="yesBtn">Yes, come here 💞</button>
       <button id="noBtn">No 😤</button>
     </div>
@@ -198,9 +198,9 @@
       <h2>SHOT MADE 🏀💘</h2>
       <p>Argument officially resolved.</p>
 
-      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RFjqtNpXmrBn2tumqM/giphy.gif">
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RFjqtNpXmrBn2tumqM/giphy.gif" alt="NBA clutch">
 
-      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWYzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif">
+      <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWYzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif" alt="NBA celebration">
 
       <p style="font-size:14px;color:#6b7280;">
         Your sweetbaby girl never misses 💗
@@ -209,13 +209,12 @@
   </div>
 
   <script>
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
+    const noBtn   = document.getElementById("noBtn");
+    const yesBtn  = document.getElementById("yesBtn");
     const promise = document.getElementById("promise");
-    const win = document.getElementById("win");
-    const toWin = document.getElementById("toWin");
-    const card = document.getElementById("card");
-    const btnRow = document.querySelector(".btnRow");
+    const win     = document.getElementById("win");
+    const toWin   = document.getElementById("toWin");
+    const btnRow  = document.getElementById("btnRow");
 
     const messages = [
       "Wait 😭",
@@ -225,6 +224,7 @@
       "Just click yes 😤💞"
     ];
 
+    // Fixed planned positions (inside btnRow)
     const positions = [
       {x:65,y:70},
       {x:15,y:70},
@@ -236,16 +236,28 @@
     ];
 
     let step = 0;
+    let armed = false;
+
+    // Prevent instant weird triggers in GitHub/email in-app browsers
+    window.addEventListener("load", () => {
+      setTimeout(() => { armed = true; }, 400);
+    });
 
     function moveNo(){
-      const cardRect = card.getBoundingClientRect();
-      const btnRect = noBtn.getBoundingClientRect();
+      if(!armed) return;
+
+      // Force visible (prevents "disappear" bugs)
+      noBtn.style.display = "inline-block";
+      noBtn.style.visibility = "visible";
+      noBtn.style.position = "absolute";
+      noBtn.style.zIndex = "10";
+
       const rowRect = btnRow.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
       const pad = 12;
 
       const p = positions[step % positions.length];
 
-      // Calculate position relative to btnRow
       let left = (p.x/100) * rowRect.width;
       let top  = (p.y/100) * rowRect.height;
 
@@ -253,22 +265,17 @@
       top  = Math.min(Math.max(pad, top), rowRect.height - btnRect.height - pad);
 
       noBtn.style.left = left + "px";
-      noBtn.style.top  = top + "px";
+      noBtn.style.top  = top  + "px";
       noBtn.style.transform = "none";
 
       noBtn.textContent = messages[Math.min(step, messages.length - 1)];
       step++;
     }
 
-    noBtn.addEventListener("mouseenter", moveNo);
-    noBtn.addEventListener("click", e => {
-      e.preventDefault();
-      moveNo();
-    });
-    noBtn.addEventListener("touchstart", e => {
-      e.preventDefault();
-      moveNo();
-    }, {passive: false});
+    // Use mouseover (mouseenter can glitch in embedded browsers)
+    noBtn.addEventListener("mouseover", () => moveNo());
+    noBtn.addEventListener("click", (e)=>{ e.preventDefault(); moveNo(); });
+    noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNo(); }, {passive:false});
 
     yesBtn.addEventListener("click", () => promise.style.display = "flex");
     toWin.addEventListener("click", () => {
