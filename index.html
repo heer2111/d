@@ -35,19 +35,17 @@
       overflow:hidden;
     }
 
+    /* Deterministic hearts (NOT random anymore) */
     .hearts{
       position:fixed;
       inset:0;
       pointer-events:none;
       opacity:.35;
     }
-
     .heart{
       position:absolute;
-      font-size:18px;
       animation: floatUp linear infinite;
     }
-
     @keyframes floatUp{
       from{ transform: translateY(110vh); opacity:0}
       10%{opacity:1}
@@ -63,7 +61,8 @@
       padding:28px;
       border:1px solid rgba(236,72,153,.15);
       text-align:center;
-      position: relative;
+      position: relative;          /* ✅ anchor for absolute NO button */
+      overflow: hidden;            /* ✅ keeps it inside */
     }
 
     .badge{
@@ -86,13 +85,10 @@
       color:var(--muted);
       font-size:16px;
       line-height:1.5;
-      margin: 10px 0;
+      margin:10px 0;
     }
 
-    .big{
-      font-weight:700;
-      color:var(--text);
-    }
+    .big{ font-weight:700; color:var(--text); }
 
     .btnRow{
       display:flex;
@@ -100,6 +96,8 @@
       gap:12px;
       margin-top:20px;
       flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
     }
 
     button{
@@ -111,19 +109,21 @@
       cursor:pointer;
       box-shadow:0 10px 25px rgba(0,0,0,.15);
       -webkit-tap-highlight-color: transparent;
+      user-select:none;
     }
 
     #yesBtn{
       background:linear-gradient(135deg,var(--pink),var(--pink2));
       color:white;
-      min-width: 170px;
+      min-width:170px;
     }
 
     #noBtn{
       background:white;
       border:1px solid #ddd;
-      position:relative;
-      min-width: 120px;
+      min-width:120px;
+      position: relative; /* starts normal */
+      z-index: 2;
     }
 
     .modal{
@@ -151,9 +151,8 @@
       text-align:left;
       margin:16px auto;
       max-width:420px;
-      padding-left: 18px;
+      padding-left:18px;
     }
-
     .apologyList li{
       margin:8px 0;
       font-size:15px;
@@ -186,7 +185,7 @@
 
     <p style="font-size:13px; margin-top:12px;">Can we press reset? 🥺</p>
 
-    <div class="btnRow">
+    <div class="btnRow" id="btnRow">
       <button id="yesBtn">Yes, come here 💞</button>
       <button id="noBtn">No 😤</button>
     </div>
@@ -225,7 +224,7 @@
       />
 
       <img
-        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif"
+        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWYzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif"
         alt="NBA celebration"
         style="width:100%;max-width:360px;border-radius:16px;margin:8px 0 6px;box-shadow:0 12px 30px rgba(0,0,0,.25);"
       />
@@ -237,19 +236,28 @@
   </div>
 
   <script>
-    // Floating hearts background
+    // Deterministic hearts (fixed positions + sizes + speeds)
     const hearts = document.getElementById("hearts");
-    const emojis = ["💗","💕","💞","💖","💘"];
-    for(let i=0;i<24;i++){
-      const h = document.createElement("div");
-      h.className = "heart";
-      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
-      h.style.left = Math.random()*100 + "vw";
-      h.style.animationDuration = (8 + Math.random()*10) + "s";
-      h.style.animationDelay = (-Math.random()*10) + "s";
-      h.style.fontSize = (14 + Math.random()*18) + "px";
-      hearts.appendChild(h);
-    }
+    const heartLayout = [
+      { left: 8,  size: 18, dur: 11, delay: -1, emoji:"💗" },
+      { left: 18, size: 14, dur: 14, delay: -6, emoji:"💞" },
+      { left: 32, size: 22, dur: 12, delay: -3, emoji:"💕" },
+      { left: 44, size: 16, dur: 16, delay: -9, emoji:"💖" },
+      { left: 57, size: 20, dur: 13, delay: -4, emoji:"💘" },
+      { left: 68, size: 15, dur: 15, delay: -8, emoji:"💗" },
+      { left: 79, size: 21, dur: 12, delay: -2, emoji:"💞" },
+      { left: 90, size: 17, dur: 17, delay: -10, emoji:"💕" },
+    ];
+    heartLayout.forEach(h => {
+      const el = document.createElement("div");
+      el.className = "heart";
+      el.textContent = h.emoji;
+      el.style.left = h.left + "vw";
+      el.style.fontSize = h.size + "px";
+      el.style.animationDuration = h.dur + "s";
+      el.style.animationDelay = h.delay + "s";
+      hearts.appendChild(el);
+    });
 
     const noBtn   = document.getElementById("noBtn");
     const yesBtn  = document.getElementById("yesBtn");
@@ -258,75 +266,66 @@
     const closeBtn= document.getElementById("closeBtn");
     const card    = document.getElementById("card");
 
-    // Messages + planned path (same every time)
     const msgs = ["Wait 😭","Baby please 🥺","Noooo don’t do that","I miss you","Just click yes 😤💞"];
     let step = 0;
 
-    // Fixed positions (percentages) INSIDE the card
+    // Planned, repeatable positions (percent inside the CARD)
     const path = [
-      { x: 70, y: 68 },
-      { x: 12, y: 68 },
-      { x: 62, y: 42 },
-      { x: 18, y: 42 },
-      { x: 52, y: 78 },
-      { x: 28, y: 30 },
-      { x: 74, y: 30 },
+      { x: 70, y: 70 },
+      { x: 15, y: 70 },
+      { x: 65, y: 48 },
+      { x: 20, y: 48 },
+      { x: 52, y: 80 },
+      { x: 30, y: 34 },
+      { x: 75, y: 34 },
     ];
 
     function moveNoPlanned(){
       const cardRect = card.getBoundingClientRect();
-      const btnRect  = noBtn.getBoundingClientRect();
-      const padding  = 12;
 
+      // switch NO to absolute *inside the card*
+      noBtn.style.position = "absolute";
+      noBtn.style.zIndex = "10";
+
+      // measure AFTER position change for accurate size
+      const btnRect = noBtn.getBoundingClientRect();
+      const btnW = btnRect.width;
+      const btnH = btnRect.height;
+
+      const padding = 12;
       const p = path[step % path.length];
 
-      // Convert % to pixels inside the card
-      let x = cardRect.left + (p.x/100) * cardRect.width;
-      let y = cardRect.top  + (p.y/100) * cardRect.height;
+      // target position in pixels relative to card
+      let left = (p.x/100) * cardRect.width;
+      let top  = (p.y/100) * cardRect.height;
 
-      // Clamp so it's ALWAYS fully visible inside the card
-      x = Math.min(
-        Math.max(cardRect.left + padding, x),
-        cardRect.right - btnRect.width - padding
-      );
-      y = Math.min(
-        Math.max(cardRect.top + padding, y),
-        cardRect.bottom - btnRect.height - padding
-      );
+      // clamp inside card
+      left = Math.min(Math.max(padding, left), cardRect.width  - btnW - padding);
+      top  = Math.min(Math.max(padding, top),  cardRect.height - btnH - padding);
 
-      // Place it (fixed so it can jump around smoothly)
-      noBtn.style.position = "fixed";
-      noBtn.style.left = x + "px";
-      noBtn.style.top  = y + "px";
-      noBtn.style.zIndex = "9999";
+      noBtn.style.left = left + "px";
+      noBtn.style.top  = top  + "px";
 
       noBtn.textContent = msgs[Math.min(step, msgs.length - 1)];
       step++;
     }
 
-    // Trigger on hover, click, and touch
+    // Hover/click/tap triggers (no randomness, ever)
     noBtn.addEventListener("mouseenter", moveNoPlanned);
     noBtn.addEventListener("click", (e)=>{ e.preventDefault(); moveNoPlanned(); });
     noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNoPlanned(); }, {passive:false});
 
-    // Open modals
-    yesBtn.addEventListener("click", ()=> {
-      modal.style.display = "flex";
-    });
+    yesBtn.addEventListener("click", ()=> { modal.style.display = "flex"; });
+    closeBtn.addEventListener("click", ()=> { modal.style.display = "none"; win.style.display = "flex"; });
 
-    closeBtn.addEventListener("click", ()=> {
-      modal.style.display = "none";
-      win.style.display = "flex";
-    });
-
-    // Reset NO button when page loads (so it starts in the row)
+    // Reset for consistent start every load
     window.addEventListener("load", ()=>{
+      step = 0;
+      noBtn.textContent = "No 😤";
       noBtn.style.position = "relative";
       noBtn.style.left = "";
-      noBtn.style.top = "";
+      noBtn.style.top  = "";
       noBtn.style.zIndex = "";
-      noBtn.textContent = "No 😤";
-      step = 0;
     });
   </script>
 
