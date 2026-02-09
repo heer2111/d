@@ -63,6 +63,7 @@
       padding:28px;
       border:1px solid rgba(236,72,153,.15);
       text-align:center;
+      position: relative;
     }
 
     .badge{
@@ -85,6 +86,7 @@
       color:var(--muted);
       font-size:16px;
       line-height:1.5;
+      margin: 10px 0;
     }
 
     .big{
@@ -97,6 +99,7 @@
       justify-content:center;
       gap:12px;
       margin-top:20px;
+      flex-wrap: wrap;
     }
 
     button{
@@ -107,17 +110,20 @@
       font-weight:700;
       cursor:pointer;
       box-shadow:0 10px 25px rgba(0,0,0,.15);
+      -webkit-tap-highlight-color: transparent;
     }
 
     #yesBtn{
       background:linear-gradient(135deg,var(--pink),var(--pink2));
       color:white;
+      min-width: 170px;
     }
 
     #noBtn{
       background:white;
       border:1px solid #ddd;
       position:relative;
+      min-width: 120px;
     }
 
     .modal{
@@ -128,6 +134,7 @@
       align-items:center;
       justify-content:center;
       padding:18px;
+      z-index: 2000;
     }
 
     .modalContent{
@@ -144,11 +151,13 @@
       text-align:left;
       margin:16px auto;
       max-width:420px;
+      padding-left: 18px;
     }
 
     .apologyList li{
       margin:8px 0;
       font-size:15px;
+      color:#374151;
     }
 
     .close{
@@ -156,6 +165,7 @@
       background:rgba(236,72,153,.10);
       color:var(--pink);
       border:1px solid rgba(236,72,153,.18);
+      box-shadow:none;
     }
   </style>
 </head>
@@ -174,12 +184,14 @@
       <span class="big">I love you so much</span>.
     </p>
 
-    <p style="font-size:13px;">Can we press reset? 🥺</p>
+    <p style="font-size:13px; margin-top:12px;">Can we press reset? 🥺</p>
 
     <div class="btnRow">
       <button id="yesBtn">Yes, come here 💞</button>
       <button id="noBtn">No 😤</button>
     </div>
+
+    <p style="font-size:12px; margin-top:14px; opacity:.8;">ps: if you click “no” it might get shy 😭</p>
   </main>
 
   <!-- PROMISE MODAL -->
@@ -208,12 +220,14 @@
 
       <img
         src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RFjqtNpXmrBn2tumqM/giphy.gif"
-        style="width:100%;max-width:360px;border-radius:16px;margin:12px 0;"
+        alt="NBA clutch shot"
+        style="width:100%;max-width:360px;border-radius:16px;margin:12px 0;box-shadow:0 12px 30px rgba(0,0,0,.25);"
       />
 
       <img
         src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExY29xNmNpcTI0cmI5OGZwd3hwdWYyNHdneGQ1emFmbzEybHNyOWg0NSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/e0M9JUv3T7rqDSv7Dz/giphy.gif"
-        style="width:100%;max-width:360px;border-radius:16px;"
+        alt="NBA celebration"
+        style="width:100%;max-width:360px;border-radius:16px;margin:8px 0 6px;box-shadow:0 12px 30px rgba(0,0,0,.25);"
       />
 
       <p style="font-size:14px;color:#6b7280;">
@@ -223,57 +237,97 @@
   </div>
 
   <script>
+    // Floating hearts background
     const hearts = document.getElementById("hearts");
-    const emojis = ["💗","💕","💞","💖"];
+    const emojis = ["💗","💕","💞","💖","💘"];
     for(let i=0;i<24;i++){
-      const h=document.createElement("div");
-      h.className="heart";
-      h.textContent=emojis[Math.floor(Math.random()*emojis.length)];
-      h.style.left=Math.random()*100+"vw";
-      h.style.animationDuration=(8+Math.random()*10)+"s";
-      h.style.animationDelay=(-Math.random()*10)+"s";
+      const h = document.createElement("div");
+      h.className = "heart";
+      h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      h.style.left = Math.random()*100 + "vw";
+      h.style.animationDuration = (8 + Math.random()*10) + "s";
+      h.style.animationDelay = (-Math.random()*10) + "s";
+      h.style.fontSize = (14 + Math.random()*18) + "px";
       hearts.appendChild(h);
     }
 
-    const noBtn=document.getElementById("noBtn");
-    const yesBtn=document.getElementById("yesBtn");
-    const modal=document.getElementById("modal");
-    const win=document.getElementById("winScreen");
-    const closeBtn=document.getElementById("closeBtn");
+    const noBtn   = document.getElementById("noBtn");
+    const yesBtn  = document.getElementById("yesBtn");
+    const modal   = document.getElementById("modal");
+    const win     = document.getElementById("winScreen");
+    const closeBtn= document.getElementById("closeBtn");
+    const card    = document.getElementById("card");
 
-    const msgs=["Wait 😭","Baby please","Nooo","I miss you","Just click yes 😤"];
-    let i=0;
+    // Messages + planned path (same every time)
+    const msgs = ["Wait 😭","Baby please 🥺","Noooo don’t do that","I miss you","Just click yes 😤💞"];
+    let step = 0;
 
- function dodge(){
-  const padding = 16;
+    // Fixed positions (percentages) INSIDE the card
+    const path = [
+      { x: 70, y: 68 },
+      { x: 12, y: 68 },
+      { x: 62, y: 42 },
+      { x: 18, y: 42 },
+      { x: 52, y: 78 },
+      { x: 28, y: 30 },
+      { x: 74, y: 30 },
+    ];
 
-  // make sure we know the button size
-  const rect = noBtn.getBoundingClientRect();
+    function moveNoPlanned(){
+      const cardRect = card.getBoundingClientRect();
+      const btnRect  = noBtn.getBoundingClientRect();
+      const padding  = 12;
 
-  // keep it INSIDE the visible screen
-  const maxX = window.innerWidth - rect.width - padding;
-  const maxY = window.innerHeight - rect.height - padding;
+      const p = path[step % path.length];
 
-  const x = padding + Math.random() * Math.max(0, maxX - padding);
-  const y = padding + Math.random() * Math.max(0, maxY - padding);
+      // Convert % to pixels inside the card
+      let x = cardRect.left + (p.x/100) * cardRect.width;
+      let y = cardRect.top  + (p.y/100) * cardRect.height;
 
-  noBtn.style.position = "fixed";
-  noBtn.style.left = x + "px";
-  noBtn.style.top  = y + "px";
-  noBtn.style.zIndex = "9999"; // ✅ never behind anything
+      // Clamp so it's ALWAYS fully visible inside the card
+      x = Math.min(
+        Math.max(cardRect.left + padding, x),
+        cardRect.right - btnRect.width - padding
+      );
+      y = Math.min(
+        Math.max(cardRect.top + padding, y),
+        cardRect.bottom - btnRect.height - padding
+      );
 
-  noBtn.textContent = msgs[Math.min(i, msgs.length - 1)];
-  i++;
-}
+      // Place it (fixed so it can jump around smoothly)
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top  = y + "px";
+      noBtn.style.zIndex = "9999";
 
-    noBtn.addEventListener("mouseenter",dodge);
-    noBtn.addEventListener("click",e=>{e.preventDefault();dodge();});
+      noBtn.textContent = msgs[Math.min(step, msgs.length - 1)];
+      step++;
+    }
 
-    yesBtn.onclick=()=>modal.style.display="flex";
-    closeBtn.onclick=()=>{
-      modal.style.display="none";
-      win.style.display="flex";
-    };
+    // Trigger on hover, click, and touch
+    noBtn.addEventListener("mouseenter", moveNoPlanned);
+    noBtn.addEventListener("click", (e)=>{ e.preventDefault(); moveNoPlanned(); });
+    noBtn.addEventListener("touchstart", (e)=>{ e.preventDefault(); moveNoPlanned(); }, {passive:false});
+
+    // Open modals
+    yesBtn.addEventListener("click", ()=> {
+      modal.style.display = "flex";
+    });
+
+    closeBtn.addEventListener("click", ()=> {
+      modal.style.display = "none";
+      win.style.display = "flex";
+    });
+
+    // Reset NO button when page loads (so it starts in the row)
+    window.addEventListener("load", ()=>{
+      noBtn.style.position = "relative";
+      noBtn.style.left = "";
+      noBtn.style.top = "";
+      noBtn.style.zIndex = "";
+      noBtn.textContent = "No 😤";
+      step = 0;
+    });
   </script>
 
 </body>
